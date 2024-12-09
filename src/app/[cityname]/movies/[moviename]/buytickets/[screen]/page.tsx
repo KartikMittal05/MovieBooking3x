@@ -4208,13 +4208,27 @@ const page = () => {
 
                               {
                                 seat.status === 'available' &&
-                                <span className='seat-available'>
+                                <span className={
+                                  selectedSeats.find((s: any) => (
+                                    s.row === row.rowname &&
+                                    s.seat_id === seat.seat_id &&
+                                    s.col === colIndex
+                                  )) ? "seat-selected" : "seat-available"
+                                }
+                                  onClick={() => selectedeselectseat({
+                                    row: row.rowname,
+                                    col: colIndex,
+                                    seat_id: seat.seat_id,
+                                    price: seatType.price
+                                  })}>
                                   {seatIndex + 1}
                                 </span>
                               }
-                               {
+                              {
                                 seat.status === 'not-available' &&
-                                <span className='seat-unavailable'>
+                                <span className='seat-unavailable'
+
+                                >
                                   {seatIndex + 1}
                                 </span>
                               }
@@ -4237,10 +4251,34 @@ const page = () => {
   const [selectedTime, setSelectedTime] = React.useState<any>(screen.timeslots[0])
 
 
-  const [selectedSeats, setSelectedSeats] = React.useState<any[]>([0])
-  const selectedeselectseat=(seat:any)=>{
-    
-  }
+  const [selectedSeats, setSelectedSeats] = React.useState<any[]>([])
+  const selectedeselectseat = (seat: any) => {
+    console.log(seat)
+    // {
+    //     "row": "F",
+    //     "col": 1,
+    //     "seat_id": "6",
+    //     "price": 500
+    // }
+    const isselected = selectedSeats.find((s: any) => (
+        s.row === seat.row &&
+        s.col === seat.col &&
+        s.seat_id === seat.seat_id
+    ))
+
+    if (isselected) {
+        setSelectedSeats(selectedSeats.filter((s: any) => (
+            s.row !== seat.row ||
+            s.col !== seat.col ||
+            s.seat_id !== seat.seat_id
+        )))
+    }
+
+    else {
+        setSelectedSeats([...selectedSeats, seat])
+    }
+}
+
 
   return (
     <div className="selectseatpage">
