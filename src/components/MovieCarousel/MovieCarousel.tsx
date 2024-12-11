@@ -3,59 +3,73 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
+// import MovieCard from './MovieCard';
+
 
 import { MovieCardType } from '@/types/types';
 import MovieCard from './MovieCard';
 
-
 const MovieCarousel = () => {
-    const Movies: MovieCardType[] = [
-        {
-            title: "Jawan",
-            imageUrl: "https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/jawan-et00330424-1693892482.jpg",
-            _id: "1",
-            rating: 8.5,
-            type: "ACtion/Thriller"
-        },
-        {
-            title: "Jawan",
-            imageUrl: "https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/jawan-et00330424-1693892482.jpg",
-            _id: "2",
-            rating: 8.5,
-            type: "ACtion/Thriller"
-        },
-        {
-            title: "Jawan",
-            imageUrl: "https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/jawan-et00330424-1693892482.jpg",
-            _id: "3",
-            rating: 8.5,
-            type: "ACtion/Thriller"
-        },
-        {
-            title: "Jawan",
-            imageUrl: "https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/jawan-et00330424-1693892482.jpg",
-            _id: "4",
-            rating: 8.5,
-            type: "ACtion/Thriller"
-        },
-        {
-            title: "Jawan",
-            imageUrl: "https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/jawan-et00330424-1693892482.jpg",
-            _id: "5",
-            rating: 8.5,
-            type: "ACtion/Thriller"
-        },
-        {
-            title: "Jawan",
-            imageUrl: "https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/jawan-et00330424-1693892482.jpg",
-            _id: "6",
-            rating: 8.5,
-            type: "ACtion/Thriller"
-        }
-    ];
+
+    const [user, setUser] = React.useState<any>(null)
+    const getuser = async () => {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/auth/getuser`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        })
+            .then((res) => {
+                return res.json();
+            })
+            .then((response) => {
+                console.log(response)
+                if(response.ok){
+                    setUser(response.data)
+                }
+                else{
+                    window.location.href = "/auth/signin"
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+
+    }
+
+    
+    const [movies, setMovies] = React.useState<MovieCardType[]>([])
+
+    const getMovies = async () => {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/movie/movies`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.ok){
+                    console.log(data)
+                    setMovies(data.data)
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
+    React.useEffect(() => {
+        getMovies()
+        getuser()
+    }, [])
     return (
         <div className='sliderout'>
-            <Swiper
+            {
+                movies && user && 
+                <Swiper
                 slidesPerView={1}
                 spaceBetween={1}
                 pagination={{
@@ -83,19 +97,19 @@ const MovieCarousel = () => {
                 className="mySwiper"
             >
                 {
-                    Movies.map((Movie) => {
+                    movies.map((Movie) => {
                         return (
                             <SwiperSlide key={Movie._id}>
-                                <MovieCard {
-                                    ...Movie
-                                }
-
+                                <MovieCard 
+                                    Movie={Movie}
+                                    user={user}
                                 />
                             </SwiperSlide>
                         )
                     })
                 }
             </Swiper>
+            }
         </div>
     )
 }

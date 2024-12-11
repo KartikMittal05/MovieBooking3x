@@ -17,8 +17,7 @@ interface FormData {
     city: string;
 }
 
-
-const Signup = () => {
+export default function Signup() {
     const [formData, setFormData] = useState<FormData>({
         name: '',
         email: '',
@@ -28,6 +27,8 @@ const Signup = () => {
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({
@@ -36,7 +37,9 @@ const Signup = () => {
         });
     };
 
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
         e.preventDefault();
 
         console.log(formData)
@@ -60,6 +63,48 @@ const Signup = () => {
             return;
         }
 
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then((res) => {
+                return res.json();
+            })
+            .then((response) => {
+                if (response.ok) {
+                    toast(response.message, {
+                        type: 'success',
+                        position: 'top-right',
+                        autoClose: 2000
+                    })
+                    window.location.href = '/auth/signin'
+                    setFormData(
+                        {
+                            name: '',
+                            email: '',
+                            password: '',
+                            confirmPassword: '',
+                            city: ''
+                        }
+                    )
+                } else {
+                    toast(response.message, {
+                        type: 'error',
+                        position: 'top-right',
+                        autoClose: 2000
+                    });
+                }
+            })
+            .catch((error) => {
+                toast(error.message, {
+                    type: 'error',
+                    position: 'top-right',
+                    autoClose: 2000
+                });
+            })
     }
     return (
         <div className='authout'>
@@ -142,9 +187,8 @@ const Signup = () => {
                         <p className='authlink'>Already have an account? <Link href="/auth/signin">login</Link></p>
                     </form>
                 </div>
+
             </div>
-        </div>
+        </div >
     )
 }
-
-export default Signup
