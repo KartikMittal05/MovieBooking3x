@@ -41,7 +41,8 @@ const LocationPopup = (
             "Patna",
             "Vadodara",
             "Meerut",
-            "Shamli"
+            "Shamli",
+            "Ghaziyabad"
         ];
 
         const cities = indianCities.map((city) => {
