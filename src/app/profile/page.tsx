@@ -159,12 +159,12 @@ const ProfilePage  = () => {
                                 <div className='booking' key={booking._id}>
                                     <div className='detail'>
                                         <h3>Movie</h3>
-                                        <p>{booking.movieId.title}</p>
+                                        <p>{booking.movieId}</p>
                                     </div>
 
                                     <div className='detail'>
                                         <h3>Screen</h3>
-                                        <p>{booking.screenId.name}</p>
+                                        <p>{booking.screenId}</p>
                                     </div>
 
                                     <div className='detail'>
